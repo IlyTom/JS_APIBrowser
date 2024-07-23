@@ -1,0 +1,97 @@
+<!DOCTYPE html>  
+<html lang="ru">  
+<head>  
+    <meta charset="UTF-8">  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+    <title>Расписание занятий</title>  
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">  
+    <style>  
+        .class-card {  
+            margin: 20px 0;  
+        }  
+    </style>  
+</head>  
+<body>  
+<div class="container">  
+    <h1 class="text-center">Расписание занятий</h1>  
+    <div id="schedule" class="class-schedule"></div>  
+</div>  
+
+<script>  
+    const defaultScheduleData = `[  
+        {  
+            "name": "Фитнес",  
+            "time": "10:00 - 11:00",  
+            "maxParticipants": 20,  
+            "currentParticipants": 15  
+        },  
+        {  
+            "name": "Йога",  
+            "time": "11:15 - 12:15",  
+            "maxParticipants": 15,  
+            "currentParticipants": 15  
+        },  
+        {  
+            "name": "Бокс",  
+            "time": "12:30 - 13:30",  
+            "maxParticipants": 10,  
+            "currentParticipants": 5  
+        }  
+    ]`;  
+
+    // Получаем данные из localStorage или используем значения по умолчанию  
+    let scheduleData = localStorage.getItem('scheduleData') || defaultScheduleData;  
+    let classes = JSON.parse(scheduleData); // Преобразуем строку JSON в объект  
+
+    const updateSchedule = () => {  
+        const scheduleDiv = document.getElementById('schedule');  
+        scheduleDiv.innerHTML = ''; // Очищаем текущие занятия  
+
+        classes.forEach((classItem, index) => {  
+            const classCard = document.createElement('div');  
+            classCard.className = 'card class-card';  
+            classCard.innerHTML = `  
+                <div class="card-body">  
+                    <h5 class="card-title">${classItem.name}</h5>  
+                    <p class="card-text">Время: ${classItem.time}</p>  
+                    <p class="card-text">Занятых мест: ${classItem.currentParticipants} / ${classItem.maxParticipants}</p>  
+                    <button class="btn btn-primary" id="register-btn-${index}" ${  
+                        classItem.currentParticipants >= classItem.maxParticipants ? 'disabled' : ''  
+                    }>Записаться</button>  
+                    <button class="btn btn-danger ml-2" id="cancel-btn-${index}" ${  
+                        classItem.currentParticipants === 0 ? 'disabled' : ''  
+                    }>Отменить запись</button>  
+                </div>  
+            `;  
+
+            scheduleDiv.appendChild(classCard);  
+
+            // Обработчик записи  
+            document.getElementById(`register-btn-${index}`).onclick = () => {  
+                if (classItem.currentParticipants < classItem.maxParticipants) {  
+                    classItem.currentParticipants++;  
+                    updateSchedule();  
+                }  
+            };  
+
+            // Обработчик отмены записи  
+            document.getElementById(`cancel-btn-${index}`).onclick = () => {  
+                if (classItem.currentParticipants > 0) {  
+                    classItem.currentParticipants--;  
+                    updateSchedule();  
+                }  
+            };  
+        });  
+
+        // Сохраняем обновленное расписание в localStorage  
+        localStorage.setItem('scheduleData', JSON.stringify(classes));  
+    };  
+
+    // Инициализация  
+    updateSchedule();  
+</script>  
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>  
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>  
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>  
+</body>  
+</html>  
