@@ -1,0 +1,21 @@
+body {  
+    display: flex;  
+    flex-direction: column;  
+    align-items: center;  
+    justify-content: center;  
+    height: 100vh;  
+    text-align: center;  
+}  
+img {  
+    max-width: 100%;  
+    height: auto;  
+}  
+button {  
+    margin-top: 10px;  
+}
+
+.access_key{
+    position: absolute;
+    top: 90%;
+    left: 10px;
+}
